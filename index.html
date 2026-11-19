@@ -95,7 +95,7 @@
     border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 14px; line-height: 1.6; cursor: pointer;
     white-space: nowrap;
   }
-  .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .print-btn:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
   /* 연락처 칩과 PDF 버튼의 높이·기준선을 맞춤 */
   header.hero { align-items: flex-end; }
   .contacts li { display: flex; margin: 0; }
@@ -220,10 +220,10 @@
       </ul>
     </div>
     <div class="hero-side">
-      <button class="print-btn" type="button" onclick="window.print()" aria-label="이력서를 PDF로 저장">
+      <a class="print-btn" href="resume.pdf" download="김성수_이력서_Backend_Engineer.pdf" aria-label="이력서 PDF 내려받기">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-        PDF로 저장
-      </button>
+        PDF 다운로드
+      </a>
       <img class="photo" src="profile.jpg" alt="김성수 프로필 사진">
     </div>
   </header>
