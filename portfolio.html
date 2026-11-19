@@ -213,7 +213,9 @@
       <li><a href="#case-sso">Keycloak SSO 연동</a></li>
       <li><a href="#case-go">AI 활용 Go APM 검증</a></li>
       <li><a href="#case-lab">폐쇄망 테스트 환경</a></li>
-      <li><a href="#case-dev">개발 프로젝트</a></li>
+      <li><a href="#case-sql">SQL 생성 자동화</a></li>
+      <li><a href="#case-date">날짜 고정 버그</a></li>
+      <li><a href="#case-plugin">알림 플러그인</a></li>
     </ol>
   </nav>
 
@@ -224,7 +226,9 @@
       <li><span class="n">2</span><b>Keycloak SAML SSO 연동 — Nginx 502와 인증 만료 오류 해결</b><span class="d">고객사 구성을 Docker로 재현해 두 가지 원인(프록시 버퍼, 서버 시간 차이)을 차례로 해결</span></li>
       <li><span class="n">3</span><b>생성형 AI로 Go APM 계측 검증 — 제품 버그 발견</b><span class="d">AI로 17개 라이브러리 검증용 앱을 만들어 계측을 검증하던 중 빌드 실패를 발견, 벤더가 제품 버그로 확인</span></li>
       <li><span class="n">4</span><b>폐쇄망 테스트 환경 구축</b><span class="d">Harbor, Kubernetes, 오프라인 패키지 설치 등 고객사 폐쇄망 환경을 재현하는 테스트 환경 구성</span></li>
-      <li><span class="n">5</span><b>개발 프로젝트</b><span class="d">SQL 생성 자동화로 작업 시간 약 85% 단축, 날짜 처리 버그 수정</span></li>
+      <li><span class="n">5</span><b>데이터 마이그레이션 INSERT 문 생성 자동화</b><span class="d">컬럼 타입만 지정하면 엑셀 함수를 만들어주는 Java 메서드로 테이블당 작성 시간 약 85% 단축</span></li>
+      <li><span class="n">6</span><b>복지포인트 갱신 오류 — 싱글톤 빈에 고정된 날짜</b><span class="d">1월에만 드러난 버그를 로그로 추적해, 빈 생성 시점에 고정된 날짜가 원인임을 찾아 해결</span></li>
+      <li><span class="n">7</span><b>와탭 알림 플러그인 개발 (진행 중)</b><span class="d">태그별 Slack 라우팅, 고객사 SMS·메시징 시스템 연동 등 고객사별 알림을 Java 플러그인으로 구현</span></li>
     </ol>
   </section>
 
@@ -376,25 +380,104 @@ go: <span class="hl-bad">error obtaining buildID for go tool compile: exit statu
   </section>
 
   <!-- ===================== 5 ===================== -->
-  <section class="case" id="case-dev">
+  <section class="case" id="case-sql">
     <p class="case-no">CASE 05</p>
-    <h2>개발 프로젝트</h2>
-    <div class="case-meta"><span>2024.06 ~ 2025.07</span><span>백엔드 개발</span></div>
-    <ul class="more">
-      <li>
-        <b>데이터 마이그레이션 SQL 생성 자동화 — 작업 시간 약 85% 단축</b>
-        <span>대형 가전 기업 해외 사이트 구축(AEM). 약 200개 테이블, 30~40만 건을 이관하면서 엑셀 함수로 만들던 INSERT 문을 Java 메서드로 자동 생성했습니다. 테이블당 약 20분 걸리던 작업이 3분으로 줄었고 수작업 오류도 없앴습니다.
-        · <a href="https://ssangsu.tistory.com/361" target="_blank" rel="noopener">상세 글</a></span>
-      </li>
-      <li>
-        <b>사내 그룹웨어 복지포인트 갱신 오류 해결</b>
-        <span>매년 1월에 포인트가 비정상으로 계산되는 문제를 분석했습니다. 조회 기준 날짜가 애플리케이션 시작 시점에 고정되어 있던 것이 원인이었고, 조회할 때마다 날짜를 동적으로 계산하도록 수정했습니다.
-        · <a href="https://ssangsu.tistory.com/360" target="_blank" rel="noopener">상세 글</a></span>
-      </li>
-      <li>
-        <b>알림 플러그인 개발 (Java)</b>
-        <span>모니터링 서버의 알림 플러그인 구조를 활용해 Slack API와 SMS 알림을 구현했습니다. 고객사 요구에 맞춰 특정 이벤트만 별도 경로에 기록하는 플러그인 방안도 설계했습니다.</span>
-      </li>
+    <h2>데이터 마이그레이션 INSERT 문 생성 자동화 — 작업 시간 약 85% 단축</h2>
+    <div class="case-meta"><span>2024.06 ~ 2025.07</span><span>백엔드 개발</span><span>대형 가전 기업 해외 사이트 구축 (AEM)</span></div>
+    <ul class="tags"><li>Java</li><li>Excel 함수</li><li>SQL</li><li>데이터 마이그레이션</li><li>업무 자동화</li></ul>
+    <p class="result"><b>결과</b> — 컬럼 타입만 지정하면 행마다 INSERT 문을 만들어주는 엑셀 함수를 생성하는 <b>Java 메서드</b>를 만들었습니다. 테이블당 INSERT 문 작성 시간이 <b>약 20분에서 3분으로(약 85%) 줄었고</b>, 따옴표 처리 같은 수작업 실수도 없앴습니다.</p>
+
+    <h3>상황</h3>
+    <p>고객사에서 받은 엑셀 데이터를 DB로 옮기는 작업이었습니다. 이관 대상은 <b>약 200개 테이블, 30~40만 건</b>이었고, 한 테이블에 수천~2만 5천 건이 들어 있었습니다. 운영 반영은 작업 절차를 기록한 작업 계획서대로 진행해야 해서, <b>최종 결과물은 INSERT 문</b>이어야 했습니다.</p>
+
+    <h3>더 나은 방법을 찾아간 과정</h3>
+    <ol class="steps">
+      <li><b>멀티커서로 직접 작성</b> — DB 툴의 멀티커서로 INSERT 문을 만들었습니다. 그런데 200건을 넣는 데 시행착오를 포함해 4~5시간이 걸렸습니다. 데이터가 많아지면 툴이 느려졌고, 텍스트 안의 작은따옴표(<code>'</code>)를 <code>''</code>로 일일이 바꿔야 하는 문제도 있었습니다.</li>
+      <li><b>엑셀 함수로 전환</b> — 2번 행에 INSERT 문을 만드는 함수를 한 번 써 두고 밑으로 끌어내리는 방식으로 바꿔 속도가 크게 올랐습니다. 하지만 <b>컬럼이 많은 테이블</b>에서는 셀 참조를 하나하나 잇고, 문자/숫자 타입에 따라 따옴표를 다르게 넣어야 해서 함수 한 줄 만드는 데도 시간이 오래 걸리고 실수가 잦았습니다.</li>
+      <li><b>CSV 적재 검토</b> — CSV로 바로 적재하면 가장 빨랐지만, 운영 반영은 INSERT 문으로 해야 해서 쓸 수 없었습니다. 그래서 <b>반영 방식(INSERT 문)은 지키면서, 반복되는 함수 작성을 자동화</b>하는 쪽으로 방향을 정했습니다.</li>
+      <li><b>엑셀 함수를 만들어주는 Java 메서드 개발</b> — 테이블명, 컬럼 수, 숫자 타입 열만 넣으면 함수가 완성되도록 만들었습니다.
+        <ul>
+          <li>숫자 타입은 그대로, 빈 셀은 <code>NULL</code>로 넣습니다. 문자 타입은 작은따옴표로 감싸고, 값 안의 <code>'</code>는 <code>SUBSTITUTE</code>로 <code>''</code>로 바꿉니다.</li>
+          <li>컬럼이 26개를 넘으면 엑셀처럼 <code>Z</code> 다음 <code>AA</code>, <code>AB</code>…로 이어지도록 열 이름을 계산합니다.</li>
+          <li>컬럼명은 <code>A$1</code>처럼 1행을 고정해서, 함수를 밑으로 끌어내려도 계속 1행의 컬럼명을 봅니다.</li>
+        </ul>
+<pre><code>generate("member", 4, Set.of("A", "B"))   // A, B는 숫자 타입
+
+="INSERT INTO member ("&amp;A$1&amp;", "&amp;B$1&amp;", "&amp;C$1&amp;", "&amp;D$1&amp;") values ("
+ &amp;IF(A2="","NULL",A2)&amp;", "&amp;IF(B2="","NULL",B2)&amp;", "
+ &amp;"'"&amp;SUBSTITUTE(C2,"'","''")&amp;"'"&amp;", "&amp;"'"&amp;SUBSTITUTE(D2,"'","''")&amp;"'"&amp;");"</code></pre>
+        만들어진 함수를 2행에 붙여넣고 밑으로 끌어내리면 <b>행마다 INSERT 문이 하나씩 완성</b>됩니다.</li>
+    </ol>
+
+    <h3>배운 점</h3>
+    <p>가장 빠른 방법(CSV)이 항상 정답은 아니었습니다. <b>운영 반영 방식이라는 제약 안에서 반복되는 부분을 찾아 코드로 자동화하는 것</b>이 실제로 효율을 내는 방법이었습니다. 또 지금 방식이 비효율적이라는 것을 스스로 알아차리고 계속 더 나은 방법을 찾아가는 과정 자체가 중요하다는 것을 배웠습니다. · <a href="https://ssangsu.tistory.com/361" target="_blank" rel="noopener">관련 글</a></p>
+  </section>
+
+  <!-- ===================== 6 ===================== -->
+  <section class="case" id="case-date">
+    <p class="case-no">CASE 06</p>
+    <h2>사내 그룹웨어 복지포인트 갱신 오류 — 싱글톤 빈에 고정된 날짜</h2>
+    <div class="case-meta"><span>2025.01</span><span>백엔드 개발 · 유지보수</span><span>사내 그룹웨어</span></div>
+    <ul class="tags"><li>Java</li><li>Spring</li><li>@Component</li><li>싱글톤 빈</li><li>LocalDate</li><li>로그 분석</li></ul>
+    <p class="result"><b>결과</b> — 매년 1월에만 드러나던 복지포인트 갱신 오류의 원인이 <b>스프링 싱글톤 빈의 필드에 고정된 날짜</b>라는 것을 찾아냈습니다. 날짜를 호출할 때마다 계산하도록 바꿔 해결했습니다.</p>
+
+    <h3>상황</h3>
+    <p>사내 그룹웨어의 복지포인트는 매달 11일에 갱신됩니다. 그런데 1월 11일에 포인트가 갱신되지 않았고, 백엔드가 내려주는 값도 이상했습니다. 포인트 계산 로직은 <code>@Component</code> 클래스에 있었고, <b>1월인지 아닌지에 따라</b> 계산 방식이 나뉘어 있었습니다.</p>
+
+    <h3>분석 과정</h3>
+    <ol class="steps">
+      <li><b>로그 확인</b> — 계산에 쓰인 기준 날짜를 로그로 확인해 보니, 오늘 날짜가 아니라 <b>2024년 12월</b>이었습니다.</li>
+      <li><b>날짜가 어디서 오는지 추적</b> — 기준 날짜는 클래스의 인스턴스 필드에 <code>LocalDate.now()</code>로 저장된 값이었습니다.
+<pre><code>@Component
+public class Util {
+    private final LocalDate today = LocalDate.now();   // 빈이 만들어질 때 한 번만 계산된다
+    ...
+    calculation(today);
+}</code></pre></li>
+      <li><b>원인 확정</b> — <code>@Component</code> 클래스는 애플리케이션이 시작될 때 <b>싱글톤 빈</b>으로 한 번 만들어집니다. 그래서 <code>today</code>에는 <b>서버를 마지막으로 띄운 날짜(12월)</b>가 고정된 채로 남아 있었습니다. 계산이 "1월인지 아닌지"로만 갈리기 때문에, 다른 달에는 결과가 같아서 드러나지 않다가 <b>1월이 되어서야 문제가 보였습니다</b>.</li>
+    </ol>
+
+    <h3>해결</h3>
+    <p>날짜를 필드에 저장하지 않고, <b>필요할 때마다 메서드를 호출해 계산</b>하도록 바꿨습니다. 기존 코드의 흐름은 그대로 두고 호출부만 바꿔 변경 범위를 최소화했습니다.</p>
+<pre><code>private static LocalDate today() {
+    return LocalDate.now();
+}
+...
+calculation(today());   // 호출할 때마다 오늘 날짜</code></pre>
+
+    <h3>배운 점</h3>
+    <p>싱글톤 빈의 필드는 <b>빈이 만들어질 때 한 번만 초기화</b>됩니다. 그래서 시간처럼 계속 바뀌는 값을 필드에 두면, 서버를 띄운 시점에 멈춰 버립니다. 시간에 의존하는 값은 <b>사용하는 시점에 계산</b>해야 한다는 것을 배웠습니다. · <a href="https://ssangsu.tistory.com/360" target="_blank" rel="noopener">관련 글</a></p>
+  </section>
+
+  <!-- ===================== 7 ===================== -->
+  <section class="case" id="case-plugin">
+    <p class="case-no">CASE 07</p>
+    <h2>와탭 알림 플러그인 개발 — 고객사별 알림 연동 (진행 중)</h2>
+    <div class="case-meta"><span>2025.07 ~ 현재</span><span>APM 솔루션 엔지니어</span><span>금융권 등 다수 고객사</span></div>
+    <ul class="tags"><li>Java</li><li>와탭 알림 플러그인</li><li>Slack Webhook</li><li>JDBC</li><li>REST API</li><li>설정 기반 설계</li></ul>
+    <p class="result"><b>결과</b> — 와탭 수집서버의 알림 플러그인 구조를 활용해, 고객사마다 다른 알림 요구(Slack 채널 분리, 사내 SMS·메시징 시스템 연동, 별도 경로 기록)를 Java 플러그인으로 구현했습니다. 지금도 고객사 요청에 맞춰 <b>계속 기능을 더하고 다듬고 있습니다</b>.</p>
+
+    <h3>배경</h3>
+    <p>와탭 수집서버는 알림이 발생하면 플러그인 파일(<code>CustomSenderPlug.x</code>)에 작성한 Java 코드를 실행합니다. 플러그인에서는 알림 제목, 메시지, 레벨, 제품 타입, 이벤트 수신 태그 같은 정보를 받을 수 있습니다. 기본 알림 채널만으로는 고객사의 운영 방식에 맞추기 어려워서, 이 구조를 이용해 고객사별 연동을 만들어 왔습니다.</p>
+
+    <h3>구현한 것</h3>
+    <ol class="steps">
+      <li><b>공통 유틸 라이브러리</b> — 플러그인마다 반복되는 HTTP 호출, 문자열·리스트 검증, 알림 레벨별 색상 지정을 별도 Java 유틸 jar로 분리했습니다. 플러그인 코드는 연동 로직에만 집중할 수 있게 했습니다.</li>
+      <li><b>태그별 Slack 채널 라우팅</b> — 알림에 붙은 이벤트 수신 태그에 따라 다른 Slack 채널로 보냅니다. 태그가 없으면 제품 타입(서버, DB 등)별 채널로 보냅니다. 태그와 채널 URL의 매핑은 <b>설정 파일에만 두어</b>, 채널을 추가하거나 바꿀 때 코드를 고치지 않아도 되게 했습니다.
+<pre><code># notihub.conf — 태그/타입별 Slack 채널 (설정만 바꾸면 라우팅이 바뀐다)
+custom_alert_tag_default=https://hooks.slack.com/services/...   # 주석 처리하면 전체 채널 전송 안 함
+custom_alert_tag_groupA=https://hooks.slack.com/services/...
+custom_alert_type_SMS=https://hooks.slack.com/services/...</code></pre>
+        태그가 1개일 때, 여러 개일 때, 없을 때, 기본 채널을 끈 경우까지 수신 테스트로 검증했고, 고객사가 따라 할 수 있도록 가이드로 정리했습니다.</li>
+      <li><b>고객사 SMS 시스템 연동</b> — 알림이 오면 고객사 SMS 발송 시스템의 DB 테이블에 JDBC(<code>PreparedStatement</code>)로 발송 데이터를 넣습니다. DB 계정 정보는 평문으로 두지 않고, 수집서버의 암호화 도구로 암호화해 설정 파일에 둔 뒤 플러그인에서 복호화해 씁니다.</li>
+      <li><b>고객사 사내 메시징 API 연동</b> — 알림 제목에 담긴 환경 구분(개발/QA/운영/DR)에 따라 전송 대상을 나눠 고객사 사내 메시징 API를 호출합니다. 알림 처리가 멈추지 않도록 호출에 타임아웃을 두었습니다.</li>
+      <li><b>특정 이벤트를 별도 경로에 기록 (진행 중)</b> — 특정 알림만 평소와 다른 경로에 파일로 남기고 싶다는 요청을 받았습니다. 고객사의 기존 플러그인 파일부터 받아 구조를 확인한 뒤, <b>태그 기반</b>과 <b>이벤트 제목 키워드 기반</b> 두 가지 방식을 테스트 환경에서 구현해 제안했습니다. 태그를 여러 개 걸면 같은 이벤트가 여러 경로에 기록될 수 있다는 주의점도 함께 안내했습니다.</li>
+    </ol>
+
+    <h3>일하는 방식</h3>
+    <ul>
+      <li><b>바뀌는 값은 설정으로</b> — 채널 URL, 수신 대상, 계정 정보처럼 고객사마다 다른 값은 설정 파일로 빼서, 같은 플러그인을 여러 고객사에 재사용할 수 있게 했습니다.</li>
+      <li><b>먼저 확인하고, 선택지를 드리기</b> — 고객사의 현재 구성을 먼저 확인하고, 가능한 방식을 장단점과 함께 제안한 뒤 고객사가 고른 방식으로 구성합니다.</li>
     </ul>
   </section>
 
