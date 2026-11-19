@@ -1,0 +1,73 @@
+# main에 push하면 index.html로 resume.pdf를 새로 만들고, 사이트와 함께 GitHub Pages에 배포합니다.
+# 사전 설정: 저장소 Settings → Pages → Build and deployment → Source를 "GitHub Actions"로 지정
+name: Build PDF & Deploy Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Korean fonts (fallback)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk poppler-utils > /dev/null
+
+      - name: Prepare site directory
+        run: |
+          mkdir -p _site
+          cp index.html profile.jpg _site/
+
+      - name: Build resume.pdf with headless Chrome
+        run: |
+          google-chrome --version
+          google-chrome --headless=new --no-sandbox --disable-gpu \
+            --no-pdf-header-footer \
+            --virtual-time-budget=10000 \
+            --print-to-pdf="$GITHUB_WORKSPACE/_site/resume.pdf" \
+            "file://$GITHUB_WORKSPACE/index.html"
+
+      - name: Verify PDF
+        run: |
+          test -s _site/resume.pdf || { echo "::error::resume.pdf가 생성되지 않았습니다"; exit 1; }
+          pdfinfo _site/resume.pdf
+          pdffonts _site/resume.pdf
+          PAGES=$(pdfinfo _site/resume.pdf | awk '/^Pages:/ {print $2}')
+          echo "### resume.pdf: ${PAGES}페이지 생성" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep PDF as a downloadable build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resume-pdf
+          path: _site/resume.pdf
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

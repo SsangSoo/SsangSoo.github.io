@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# index.html 내용을 바꾼 뒤 실행하면, 페이지의 인쇄용(A4) 레이아웃으로 resume.pdf를 다시 만듭니다.
+# 로컬 미리보기용: 페이지의 인쇄용(A4) 레이아웃으로 resume.pdf를 만듭니다.
+# 배포되는 PDF는 GitHub Actions(.github/workflows/deploy.yml)가 push 때마다 자동으로 만들므로,
+# 이 스크립트는 push 전에 결과를 미리 확인하고 싶을 때만 쓰면 됩니다. (resume.pdf는 git에 올라가지 않음)
 # 사용법: Git Bash에서  ./build-pdf.sh
 set -euo pipefail
 cd "$(dirname "$0")"
