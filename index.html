@@ -167,9 +167,10 @@
     /* 페이지 나눔 제어 */
     h2, h3, h4, .company, .period, .meta { break-after: avoid; page-break-after: avoid; }
     li, .stat, .highlights, header.hero, .company { break-inside: avoid; page-break-inside: avoid; }
-    #certs, #education, #portfolio { break-inside: avoid; }
-    /* 큰 섹션은 항상 새 페이지에서 시작 → 제목만 남고 내용이 넘어가는 현상 방지 */
-    #career, #projects { break-before: page; page-break-before: always; margin-top: 0; }
+    #certs, #education, #portfolio, #summary { break-inside: avoid; }
+    #about p { break-inside: avoid; }
+    /* 직무 블록의 제목부가 페이지 끝에 홀로 남지 않도록 */
+    .job > h3, .job > .period, .job > h4 { break-after: avoid; page-break-after: avoid; }
     .company + .meta { margin-bottom: 1mm; }
   }
 </style>
@@ -202,18 +203,13 @@
     </div>
   </header>
 
-  <section id="about">
-    <h2>자기소개</h2>
+  <section id="summary">
+    <h2>핵심 성과</h2>
     <div class="highlights">
       <div class="stat"><b>20~30곳</b><span>고객사 모니터링 솔루션 설치·연동 지원</span></div>
       <div class="stat"><b>약 85%</b><span>테이블당 SQL 작성 시간 단축</span></div>
       <div class="stat"><b>30~40만 건</b><span>약 200개 테이블 데이터 마이그레이션</span></div>
     </div>
-    <p>Java/Spring 기반 백엔드 개발과 Linux, Docker, Kubernetes 등 인프라 환경 구축 경험을 갖추고 있습니다. 또한 다양한 고객사의 모니터링 솔루션 설치 및 연동을 지원하며 실제 서비스 운영 환경과 시스템의 동작 방식에 대한 이해를 넓혀왔습니다. 이를 바탕으로 애플리케이션뿐 아니라 인프라와 모니터링 관점에서도 기술적 문제를 분석하고 해결하는 역량을 쌓아왔습니다.</p>
-    <p>LG전자 카자흐스탄 사이트 구축 프로젝트에서는 기존 AEM 기반 배치 및 관리자 모듈의 코드를 분석하고, 신규 언어 지원을 위한 서비스 로직을 확장했습니다. 또한 약 200개 테이블, 30~40만 건의 데이터 마이그레이션 과정에서 반복적인 SQL 생성 작업을 Java 메서드로 자동화하여 테이블당 SQL 작성 시간을 약 85% 단축했습니다.</p>
-    <p>이후 성능 모니터링 솔루션 엔지니어로 근무하며 약 20~30개 고객사의 JVM, Linux, DB 및 네트워크 환경에서 모니터링 솔루션 설치와 연동을 지원했습니다. 고객사 환경의 문제를 재현하고 검증하기 위해 Kubernetes 테스트 클러스터와 폐쇄망 Harbor 환경을 구축했으며, Keycloak 기반 SSO 연동 과정에서는 Nginx 설정 문제를 분석하고 해결했습니다. 또한 Java 기반 알림 플러그인을 개발하고 AWS CloudWatch의 권한 적용 문제를 발견하여 벤더 제품 개선에 기여했습니다.</p>
-    <p>저는 새로운 기술을 학습하거나 문제를 분석할 때는 생성형 AI를 적극적으로 활용하되, 실제 실행 결과와 로그를 통해 직접 검증하는 과정을 중요하게 생각합니다. 이러한 방식으로 테스트 환경 구축과 반복 작업의 효율성을 높였으며, Go APM 자동 계측 도구의 비정상 동작을 발견하고 벤더를 통해 제품 버그임을 확인받은 경험도 있습니다.</p>
-    <p>앞으로도 개발과 인프라, 모니터링 경험을 바탕으로 기능 구현뿐 아니라 애플리케이션의 실행 환경과 시스템 간 연동까지 고려하며, 기술적 문제를 주도적으로 분석하고 개선하는 개발자가 되고자 합니다.</p>
   </section>
 
   <section id="skills">
@@ -334,6 +330,15 @@
     <h2>교육</h2>
     <h3>국가평생교육진흥원 (학점은행제)</h3>
     <p class="meta">졸업 | 대학교(학사) | 컴퓨터공학 · 2020. 09. ~ 2022. 08.</p>
+  </section>
+
+  <section id="about">
+    <h2>자기소개</h2>
+    <p>Java/Spring 기반 백엔드 개발과 Linux, Docker, Kubernetes 등 인프라 환경 구축 경험을 갖추고 있습니다. 또한 다양한 고객사의 모니터링 솔루션 설치 및 연동을 지원하며 실제 서비스 운영 환경과 시스템의 동작 방식에 대한 이해를 넓혀왔습니다. 이를 바탕으로 애플리케이션뿐 아니라 인프라와 모니터링 관점에서도 기술적 문제를 분석하고 해결하는 역량을 쌓아왔습니다.</p>
+    <p>LG전자 카자흐스탄 사이트 구축 프로젝트에서는 기존 AEM 기반 배치 및 관리자 모듈의 코드를 분석하고, 신규 언어 지원을 위한 서비스 로직을 확장했습니다. 또한 약 200개 테이블, 30~40만 건의 데이터 마이그레이션 과정에서 반복적인 SQL 생성 작업을 Java 메서드로 자동화하여 테이블당 SQL 작성 시간을 약 85% 단축했습니다.</p>
+    <p>이후 성능 모니터링 솔루션 엔지니어로 근무하며 약 20~30개 고객사의 JVM, Linux, DB 및 네트워크 환경에서 모니터링 솔루션 설치와 연동을 지원했습니다. 고객사 환경의 문제를 재현하고 검증하기 위해 Kubernetes 테스트 클러스터와 폐쇄망 Harbor 환경을 구축했으며, Keycloak 기반 SSO 연동 과정에서는 Nginx 설정 문제를 분석하고 해결했습니다. 또한 Java 기반 알림 플러그인을 개발하고 AWS CloudWatch의 권한 적용 문제를 발견하여 벤더 제품 개선에 기여했습니다.</p>
+    <p>저는 새로운 기술을 학습하거나 문제를 분석할 때는 생성형 AI를 적극적으로 활용하되, 실제 실행 결과와 로그를 통해 직접 검증하는 과정을 중요하게 생각합니다. 이러한 방식으로 테스트 환경 구축과 반복 작업의 효율성을 높였으며, Go APM 자동 계측 도구의 비정상 동작을 발견하고 벤더를 통해 제품 버그임을 확인받은 경험도 있습니다.</p>
+    <p>앞으로도 개발과 인프라, 모니터링 경험을 바탕으로 기능 구현뿐 아니라 애플리케이션의 실행 환경과 시스템 간 연동까지 고려하며, 기술적 문제를 주도적으로 분석하고 개선하는 개발자가 되고자 합니다.</p>
   </section>
 
   <section id="portfolio">
