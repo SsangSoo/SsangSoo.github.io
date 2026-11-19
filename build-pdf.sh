@@ -17,9 +17,11 @@ done
 [ -n "$CHROME" ] || { echo "Chrome 또는 Edge를 찾을 수 없습니다." >&2; exit 1; }
 
 DIR="$(pwd -W 2>/dev/null || pwd)"
-"$CHROME" --headless=new --disable-gpu --no-pdf-header-footer \
-  --virtual-time-budget=5000 \
-  --print-to-pdf="$DIR/resume.pdf" \
-  "file:///$DIR/index.html" 2>/dev/null
-
-echo "resume.pdf 생성 완료"
+for pair in "index.html:resume.pdf" "portfolio.html:portfolio.pdf"; do
+  SRC="${pair%%:*}"; OUT="${pair##*:}"
+  "$CHROME" --headless=new --disable-gpu --no-pdf-header-footer \
+    --virtual-time-budget=5000 \
+    --print-to-pdf="$DIR/$OUT" \
+    "file:///$DIR/$SRC" 2>/dev/null
+  echo "$OUT 생성 완료"
+done

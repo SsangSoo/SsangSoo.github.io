@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>김성수 포트폴리오</title>
+<meta name="description" content="APM·인프라 엔지니어로 일하며 원인을 분석하고 해결한 기술 사례 모음 — 백엔드 엔지니어 김성수">
+<link rel="canonical" href="https://ssangsoo.github.io/portfolio.html">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://ssangsoo.github.io/portfolio.html">
+<meta property="og:site_name" content="김성수 이력서">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="김성수 포트폴리오 | Backend Engineer">
+<meta property="og:description" content="문제 분석과 해결 과정을 중심으로 정리한 기술 사례 모음">
+<meta property="og:image" content="https://ssangsoo.github.io/profile.jpg">
+<meta property="og:image:alt" content="김성수 프로필 사진">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="profile.jpg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f6f7f9;
+    --text: #1d1f23;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --accent: #2563eb;
+    --accent-soft: #eff4ff;
+    --ok: #15803d;
+    --ok-soft: #ecfdf3;
+    --bad: #b42318;
+    --bad-soft: #fef3f2;
+    --code-bg: #f3f4f6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111316;
+      --surface: #1a1d22;
+      --text: #e7e9ec;
+      --muted: #9aa1ab;
+      --line: #2a2e35;
+      --accent: #6ea0ff;
+      --accent-soft: #1b2638;
+      --ok: #4ade80;
+      --ok-soft: #12261a;
+      --bad: #f87171;
+      --bad-soft: #2a1515;
+      --code-bg: #1a1d22;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    line-height: 1.75; font-size: 16px; word-break: keep-all; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 64px 24px 96px; }
+
+  /* 헤더 */
+  header.hero { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+  .eyebrow { color: var(--accent); font-weight: 600; font-size: 14px; letter-spacing: .04em; margin: 0 0 6px; }
+  .hero h1 { font-size: 36px; margin: 0; letter-spacing: -0.02em; line-height: 1.25; }
+  .hero .lead { color: var(--muted); margin: 10px 0 0; max-width: 560px; }
+  .hero-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
+    color: var(--text); font-size: 14px; line-height: 1; white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+  .btn svg { width: 15px; height: 15px; }
+
+  /* 목차 */
+  .toc { position: sticky; top: 0; z-index: 10; margin-top: 36px; background: var(--bg); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .toc ol { display: flex; gap: 4px; margin: 0; padding: 8px 0; list-style: none; overflow-x: auto; scrollbar-width: none; counter-reset: c; }
+  .toc ol::-webkit-scrollbar { display: none; }
+  .toc li { flex: none; margin: 0; counter-increment: c; }
+  .toc a { display: block; padding: 6px 12px; border-radius: 8px; color: var(--muted); font-size: 14px; font-weight: 500; line-height: 1.6; white-space: nowrap; }
+  .toc a::before { content: counter(c) ". "; }
+  .toc a:hover, .toc a.active { color: var(--accent); background: var(--accent-soft); text-decoration: none; }
+
+  /* 요약 표 */
+  .overview { margin-top: 40px; }
+  .overview h2, .case > h2 { font-size: 26px; margin: 0 0 16px; letter-spacing: -0.01em; }
+  .ov-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .ov-list li { display: grid; grid-template-columns: 28px 1fr; gap: 4px 12px; padding: 14px 16px; background: var(--surface); border-radius: 12px; margin: 0; }
+  .ov-list .n { font-weight: 700; color: var(--accent); }
+  .ov-list b { display: block; }
+  .ov-list .d { color: var(--muted); font-size: 14px; grid-column: 2; }
+  .case .tags { padding-left: 0; }
+
+  /* 사례 */
+  .case { border-top: 1px solid var(--line); margin-top: 56px; padding-top: 48px; scroll-margin-top: 72px; }
+  .case-no { color: var(--accent); font-weight: 700; font-size: 14px; margin: 0 0 4px; letter-spacing: .04em; }
+  .case-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--muted); font-size: 14px; margin: -8px 0 14px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 0 0 20px; list-style: none; }
+  .tags li { background: var(--accent-soft); color: var(--accent); padding: 2px 10px; border-radius: 6px; font-size: 13px; font-weight: 500; margin: 0; }
+  .result {
+    border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px;
+    padding: 12px 16px; margin: 0 0 24px; background: var(--surface);
+  }
+  .result b { color: var(--accent); }
+  .case h3 { font-size: 17px; margin: 26px 0 6px; }
+  .case p { margin: 0 0 10px; }
+  .case ul, .case ol { margin: 4px 0 10px; padding-left: 22px; }
+  .case li { margin: 3px 0; }
+  .steps { counter-reset: s; list-style: none; padding-left: 0 !important; }
+  .steps > li { counter-increment: s; position: relative; padding-left: 34px; margin: 10px 0; }
+  .steps > li::before {
+    content: counter(s); position: absolute; left: 0; top: 2px; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin: 8px 0 14px;
+    font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-x: auto; white-space: pre-wrap; word-break: break-all;
+  }
+  code { font: 0.9em ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+  pre code { background: none; padding: 0; }
+  .hl-bad { color: var(--bad); font-weight: 600; }
+  .hl-ok { color: var(--ok); font-weight: 600; }
+  .note { color: var(--muted); font-size: 14px; }
+
+  /* 다이어그램 */
+  figure { margin: 12px 0 18px; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { color: var(--muted); font-size: 13px; text-align: center; margin-top: 6px; }
+  .d-box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+  .d-box-accent { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+  .d-box-bad { fill: var(--bad-soft); stroke: var(--bad); stroke-width: 1.5; }
+  .d-box-ok { fill: var(--ok-soft); stroke: var(--ok); stroke-width: 1.5; }
+  .d-t { fill: var(--text); font: 600 14px "Pretendard", sans-serif; }
+  .d-s { fill: var(--muted); font: 12px "Pretendard", sans-serif; }
+  .d-line { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .d-line-ok { stroke: var(--ok); stroke-width: 2; fill: none; }
+  .d-line-bad { stroke: var(--bad); stroke-width: 2; fill: none; stroke-dasharray: 6 4; }
+  .d-ok { fill: var(--ok); font: 600 12px "Pretendard", sans-serif; }
+  .d-bad { fill: var(--bad); font: 600 12px "Pretendard", sans-serif; }
+
+  /* 기타 */
+  .more { list-style: none; padding: 0 !important; display: grid; gap: 10px; }
+  .more li { padding: 12px 16px; border: 1px solid var(--line); border-radius: 12px; margin: 0 !important; }
+  .more b { display: block; }
+  .more span { color: var(--muted); font-size: 14px; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 13px; text-align: center; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 40px 16px 80px; }
+    .hero h1 { font-size: 28px; }
+    .case > h2, .overview h2 { font-size: 22px; }
+  }
+
+  /* ===== PDF / 인쇄 (A4) ===== */
+  @page { size: A4; margin: 15mm 15mm 16mm; }
+  @media print {
+    :root { --bg:#fff; --surface:#f4f6f9; --text:#111; --muted:#555; --line:#d9dce1; --accent:#1d4ed8; --accent-soft:#eaf0ff;
+            --ok:#15803d; --ok-soft:#ecfdf3; --bad:#b42318; --bad-soft:#fef3f2; --code-bg:#f4f5f7; }
+    html, body { background: #fff; }
+    body { font-size: 10pt; line-height: 1.6; -webkit-print-color-adjust: exact; print-color-adjust: exact; orphans: 3; widows: 3; }
+    .toc, .hero-actions, footer { display: none !important; }
+    .wrap { max-width: none; padding: 0; }
+    header.hero { padding-bottom: 4mm; border-bottom: 2px solid var(--accent); }
+    .hero h1 { font-size: 22pt; }
+    .hero .lead { font-size: 10pt; max-width: none; }
+    .overview { margin-top: 7mm; }
+    .overview h2, .case > h2 { font-size: 15pt; margin-bottom: 3mm; }
+    .ov-list { gap: 2.5mm; }
+    .ov-list li { padding: 3mm 4mm; border-radius: 2mm; border: 1px solid var(--line); }
+    .ov-list .d { font-size: 9pt; }
+    /* 사례마다 새 페이지에서 시작 */
+    .case { break-before: page; border-top: 0; margin-top: 0; padding-top: 0; }
+    .case-meta { font-size: 9pt; }
+    .tags li { font-size: 8.5pt; }
+    .result { padding: 3mm 4mm; }
+    .case h3 { font-size: 11.5pt; margin: 4.5mm 0 1.5mm; }
+    pre { font-size: 8pt; padding: 2.5mm 3mm; }
+    figcaption { font-size: 8.5pt; margin-top: 1mm; }
+    figure { margin: 1mm auto 2mm; max-width: 115mm; }
+    .steps > li { margin: 1.5mm 0; }
+    .case p { margin-bottom: 1.5mm; }
+    .result { margin-bottom: 4mm; }
+    h2, h3, .case-no, .case-meta { break-after: avoid; page-break-after: avoid; }
+    li, pre, figure, .result, .ov-list li, .more li { break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header class="hero">
+    <div>
+      <p class="eyebrow">PORTFOLIO · 김성수 · Backend Engineer</p>
+      <h1>원인을 끝까지 추적해서 해결한 기술 사례</h1>
+      <p class="lead">APM 솔루션 엔지니어로 다양한 고객사 환경을 지원하며, 로그와 재현 환경으로 원인을 좁혀 해결한 사례를 정리했습니다. 고객사 정보와 계정·식별자는 모두 가렸습니다.</p>
+    </div>
+    <div class="hero-actions">
+      <a class="btn" href="./">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        이력서 보기</a>
+      <a class="btn" href="portfolio.pdf" download="김성수_포트폴리오_Backend_Engineer.pdf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        PDF 다운로드</a>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="목차">
+    <ol>
+      <li><a href="#case-aws">AWS 로그 수집 권한</a></li>
+      <li><a href="#case-sso">Keycloak SSO 연동</a></li>
+      <li><a href="#case-go">Go APM 계측 버그</a></li>
+      <li><a href="#case-lab">폐쇄망 테스트 환경</a></li>
+      <li><a href="#case-cve">보안 취약점 대응</a></li>
+      <li><a href="#case-dev">개발 프로젝트</a></li>
+    </ol>
+  </nav>
+
+  <section class="overview" aria-labelledby="ov-title">
+    <h2 id="ov-title">한눈에 보기</h2>
+    <ol class="ov-list">
+      <li><span class="n">1</span><b>AWS RDS 로그 수집 실패 — IAM Role 적용 방식 차이 발견</b><span class="d">에러 로그로 원인을 특정해 벤더에 전달 → 제품 수정 버전 배포, 계정 간 수집 기능 개발로 이어짐</span></li>
+      <li><span class="n">2</span><b>Keycloak SAML SSO 연동 — Nginx 502와 인증 만료 오류 해결</b><span class="d">고객사 구성을 Docker로 재현해 두 가지 원인(프록시 버퍼, 서버 시간 차이)을 차례로 해결</span></li>
+      <li><span class="n">3</span><b>Go APM 자동 계측 도구 — 옵션 버그 발견</b><span class="d">17개 라이브러리 계측을 검증하던 중 빌드 실패를 발견, 벤더가 제품 버그로 확인</span></li>
+      <li><span class="n">4</span><b>폐쇄망 테스트 환경 구축</b><span class="d">Harbor, Kubernetes, 오프라인 패키지 설치 등 고객사 폐쇄망 환경을 재현하는 테스트 환경 구성</span></li>
+      <li><span class="n">5</span><b>보안 취약점 영향도 대응</b><span class="d">신규 CVE 발표 직후 영향 여부를 확인하고 하루 만에 고객사 10곳 이상에 안내</span></li>
+      <li><span class="n">6</span><b>개발 프로젝트</b><span class="d">SQL 생성 자동화로 작업 시간 약 85% 단축, 날짜 처리 버그 수정</span></li>
+    </ol>
+  </section>
+
+  <!-- ===================== 1 ===================== -->
+  <section class="case" id="case-aws">
+    <p class="case-no">CASE 01</p>
+    <h2>AWS RDS 로그 수집 실패 — IAM Role 적용 방식 차이 발견</h2>
+    <div class="case-meta"><span>2026.10 ~ 2026.11</span><span>APM 솔루션 엔지니어</span><span>대기업 고객사 (AWS 운영 환경)</span></div>
+    <ul class="tags"><li>AWS IAM</li><li>STS AssumeRole</li><li>CloudWatch Logs</li><li>RDS PostgreSQL</li><li>로그 분석</li></ul>
+    <p class="result"><b>결과</b> — 원인을 특정해 벤더에 전달했고, 벤더가 <b>제품을 수정한 에이전트 버전(0.7.1)</b>을 배포했습니다. 같은 문제를 겪던 다른 고객사 사례까지 이어져 <b>AWS 계정 간(크로스 어카운트) 수집 기능 개발</b>이 진행됐습니다.</p>
+
+    <h3>상황</h3>
+    <p>고객사 RDS(PostgreSQL)를 모니터링하는 클라우드 에이전트에서 <b>메트릭은 정상으로 수집되는데 DB 로그만 수집되지 않는</b> 문제가 발생했습니다. 에이전트 설정에는 수집용 IAM Role(AssumeRole 대상)이 지정되어 있었고, 그 Role에는 로그 조회 권한이 포함된 관리형 정책이 붙어 있었습니다.</p>
+
+    <h3>분석 과정</h3>
+    <ol class="steps">
+      <li>권한이 있는데도 실패한다는 점에서 <b>"권한 부족"이 아니라 "다른 주체로 호출하고 있다"</b>는 가설을 세우고 에이전트 로그를 확인했습니다.</li>
+      <li>에러 로그의 호출 주체가 설정한 수집용 Role이 아니라 <b>수집서버(EC2)의 인스턴스 Role</b>이라는 점을 발견했습니다.
+<pre><code>AccessDeniedException: User: arn:aws:sts::&lt;ACCOUNT&gt;:assumed-role/<span class="hl-bad">&lt;collector-ec2-role&gt;</span>/&lt;instance-id&gt;
+is not authorized to perform: <span class="hl-bad">logs:FilterLogEvents</span> on resource: ...:log-group:/aws/rds/cluster/&lt;cluster&gt;/postgresql</code></pre></li>
+      <li>즉 <b>메트릭 수집은 설정된 Role을 AssumeRole해서 호출하지만, 로그 수집은 AssumeRole 없이 EC2 기본 자격 증명으로 호출</b>하고 있었습니다. 에러 로그, 정책 구성, 에이전트 버전, 계정 구성을 정리해 벤더에 전달했고, 벤더도 같은 원인으로 확인했습니다.</li>
+    </ol>
+    <figure>
+      <svg viewBox="0 0 680 210" role="img" aria-label="메트릭은 AssumeRole로 수집되지만 로그는 EC2 Role로 호출되어 실패하는 구조">
+        <defs>
+          <marker id="aOk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ok)"/></marker>
+          <marker id="aBad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--bad)"/></marker>
+        </defs>
+        <rect class="d-box-accent" x="10" y="70" width="170" height="70" rx="10"/>
+        <text class="d-t" x="95" y="100" text-anchor="middle">수집 에이전트</text>
+        <text class="d-s" x="95" y="120" text-anchor="middle">EC2 (인스턴스 Role)</text>
+
+        <rect class="d-box" x="260" y="14" width="170" height="50" rx="10"/>
+        <text class="d-t" x="345" y="36" text-anchor="middle">AssumeRole</text>
+        <text class="d-s" x="345" y="54" text-anchor="middle">설정된 수집용 Role</text>
+
+        <rect class="d-box-ok" x="500" y="14" width="170" height="50" rx="10"/>
+        <text class="d-t" x="585" y="36" text-anchor="middle">CloudWatch 메트릭</text>
+        <text class="d-ok" x="585" y="54" text-anchor="middle">수집 성공</text>
+
+        <rect class="d-box-bad" x="500" y="146" width="170" height="50" rx="10"/>
+        <text class="d-t" x="585" y="168" text-anchor="middle">CloudWatch Logs</text>
+        <text class="d-bad" x="585" y="186" text-anchor="middle">AccessDenied</text>
+
+        <path class="d-line-ok" d="M180,90 C220,90 220,39 256,39" marker-end="url(#aOk)"/>
+        <path class="d-line-ok" d="M430,39 L496,39" marker-end="url(#aOk)"/>
+        <path class="d-line-bad" d="M180,120 C330,120 330,171 496,171" marker-end="url(#aBad)"/>
+        <text class="d-bad" x="310" y="110" text-anchor="middle">로그: EC2 Role 그대로 호출</text>
+      </svg>
+      <figcaption>메트릭과 로그 수집이 서로 다른 자격 증명을 쓰고 있던 구조</figcaption>
+    </figure>
+
+    <h3>해결</h3>
+    <ul>
+      <li><b>임시 조치:</b> 수집서버와 RDS가 같은 AWS 계정이라는 점을 확인한 뒤, EC2 Role에 <code>logs:FilterLogEvents</code>, <code>logs:DescribeLogGroups</code> 권한만 최소로 추가해 바로 수집되도록 안내했습니다.</li>
+      <li><b>근본 해결:</b> 로그 수집에도 설정된 Role을 적용해 달라고 벤더에 요청하고 진행 상황을 계속 확인했습니다. 벤더가 수정 버전(0.7.1)을 배포하면서, 설정 한 줄만 추가하면 로그도 수집용 Role로 가져오게 됐습니다. 덕분에 <b>임시로 추가했던 EC2 Role 권한을 다시 제거</b>할 수 있게 됐습니다.</li>
+    </ul>
+
+    <h3>배운 점</h3>
+    <p>"권한이 있는데 거부된다"는 상황에서는 정책 내용보다 <b>실제로 호출한 주체(Principal)</b>를 먼저 확인해야 한다는 것을 배웠습니다. 에러 메시지의 ARN 한 줄이 원인을 가장 정확하게 알려줬습니다.</p>
+  </section>
+
+  <!-- ===================== 2 ===================== -->
+  <section class="case" id="case-sso">
+    <p class="case-no">CASE 02</p>
+    <h2>Keycloak SAML 2.0 SSO 연동 — Nginx 502와 인증 만료 오류 해결</h2>
+    <div class="case-meta"><span>2026.10</span><span>APM 솔루션 엔지니어</span><span>금융권 고객사 연동 지원</span></div>
+    <ul class="tags"><li>Keycloak</li><li>SAML 2.0</li><li>Nginx</li><li>Docker Compose</li><li>Spring Security</li><li>NTP</li></ul>
+    <p class="result"><b>결과</b> — 고객사 구성(Nginx + Keycloak + 모니터링 서버)을 Docker로 재현해 <b>연동 절차를 검증</b>했고, 그 과정에서 만난 <b>두 가지 장애의 원인과 해결 방법</b>을 가이드로 정리해 고객사 연동에 적용했습니다.</p>
+
+    <h3>상황</h3>
+    <p>고객사가 Nginx 리버스 프록시 뒤의 Keycloak을 IdP로 사용해 모니터링 솔루션에 SAML 2.0 SSO를 적용하려 했습니다. 벤더 가이드는 다른 Keycloak 버전 기준이라 메뉴 구성이 달라서, 그대로 따라 할 수 없었습니다.</p>
+
+    <h3>분석 및 해결</h3>
+    <ol class="steps">
+      <li><b>재현 환경 구성</b> — Docker Compose로 Nginx와 Keycloak(10.0.2)을 띄우고, 프록시 헤더(<code>X-Forwarded-*</code>)와 프론트 URL을 고객사 구성과 같게 맞췄습니다. Realm 생성부터 IdP 메타데이터 등록, SAML Client 서명 옵션 설정까지 직접 수행하며 절차를 검증했습니다.</li>
+      <li><b>문제 ① 로그인 직후 502 Bad Gateway</b> — 브라우저에는 502만 보여서, Nginx 에러 로그를 확인했습니다.
+<pre><code><span class="hl-bad">upstream sent too big header</span> while reading response header from upstream</code></pre>
+        SAML 응답 과정에서 Keycloak이 보내는 응답 헤더가 Nginx 기본 프록시 버퍼보다 커서 생긴 문제였습니다. 프록시 버퍼 크기를 늘려 해결했습니다.
+<pre><code>proxy_buffers           4 256k;
+proxy_busy_buffers_size 256k;   # + proxy_buffer_size 상향</code></pre></li>
+      <li><b>문제 ② 로그인 화면은 넘어가는데 인증이 실패</b> — 화면에는 단서가 없어서, 모니터링 서버의 SSO 디버그 로그(<code>debug_sso=true</code>)를 켜고 원인을 찾았습니다.
+<pre><code>Saml2AuthenticationException: Invalid assertion [...]:
+Assertion '...' with <span class="hl-bad">NotOnOrAfter</span> condition of '...' is no longer valid</code></pre>
+        SAML Assertion의 유효 시간이 이미 지난 것으로 판정되고 있었습니다. 확인해 보니 <b>모니터링 서버는 시간 동기화가 되어 있었지만 Keycloak 서버는 시각이 어긋나 있었습니다.</b> 서버 간 시간을 동기화하자 정상 로그인됐습니다.</li>
+    </ol>
+
+    <h3>배운 점</h3>
+    <ul>
+      <li>프록시를 거치는 인증 흐름에서는 브라우저 에러보다 <b>프록시와 애플리케이션 양쪽 로그</b>를 함께 봐야 원인이 보입니다.</li>
+      <li>SAML처럼 서명과 유효 시간을 검증하는 프로토콜은 <b>서버 간 시간 동기화가 전제 조건</b>입니다. 원인을 찾는 데 가장 오래 걸린 부분이라, 가이드에 따로 적어 두었습니다.</li>
+    </ul>
+  </section>
+
+  <!-- ===================== 3 ===================== -->
+  <section class="case" id="case-go">
+    <p class="case-no">CASE 03</p>
+    <h2>Go APM 자동 계측 도구 검증 — 옵션 버그 발견</h2>
+    <div class="case-meta"><span>2026.11</span><span>APM 솔루션 엔지니어</span><span>Go 애플리케이션 고객사 지원</span></div>
+    <ul class="tags"><li>Go</li><li>Gin · Echo · Fiber</li><li>GORM · sqlx</li><li>gRPC · Kafka</li><li>자동 계측</li></ul>
+    <p class="result"><b>결과</b> — 빌드 래퍼 방식 자동 계측 도구를 검증하다가 <code>--error-tracking</code> 옵션의 비정상 동작을 발견했습니다. 벤더가 이를 <b>제품 버그로 확인</b>했고, 수정 전까지 해당 옵션을 쓰지 않도록 고객사에 미리 안내했습니다.</p>
+
+    <h3>상황</h3>
+    <p>Go APM은 <code>whatap-go-inst go build</code>처럼 빌드 명령을 감싸서, 컴파일할 때 모니터링 코드를 주입하는 방식입니다. 고객사가 실제로 쓰는 프레임워크와 라이브러리에서 계측이 잘 되는지, 옵션별로 어떻게 동작하는지 확인이 필요했습니다.</p>
+
+    <h3>검증 과정</h3>
+    <ol class="steps">
+      <li><b>검증용 애플리케이션 구성</b> — 웹 프레임워크 6종(net/http, Gin, Echo, Fiber, chi, gorilla/mux), DB 접근 4종(database/sql, sqlx, GORM v1/v2), Redis, MongoDB, gRPC, Kafka(sarama), Kubernetes client 등 <b>17개 의존성</b>을 넣은 샘플 앱을 만들었습니다. <code>go build</code>, <code>go test</code>, <code>remove</code> 명령으로 계측 대상 파일과 결과를 하나씩 확인했습니다.</li>
+      <li><b>문서와 실제 동작의 차이 정리</b> — 문서에 있던 <code>inject</code> 명령은 이미 제거됐고, 설정 파일의 <code>preset</code> 항목은 현재 버전에서 지원하지 않는다는 점을 확인해 정리했습니다.</li>
+      <li><b>이상 동작 발견</b> — 에러 추적 코드를 자동으로 주입하는 <code>--error-tracking</code> 옵션을 켜면 빌드가 실패하고 계측된 파일이 0개였습니다.
+<pre><code>$ whatap-go-inst --error-tracking go build -o app .
+go: <span class="hl-bad">error obtaining buildID for go tool compile: exit status 1</span>
+📁 Total: <span class="hl-bad">0 files</span></code></pre></li>
+      <li>같은 코드에서 옵션만 빼면 정상이라는 점과 재현 절차를 정리해 벤더에 문의했고, <b>벤더가 제품 버그로 확인</b>했습니다.</li>
+    </ol>
+
+    <h3>배운 점</h3>
+    <p>설치 가이드를 그대로 전달하기 전에 <b>고객사 기술 스택과 비슷한 환경에서 직접 돌려보는 것</b>이 장애를 예방하는 가장 확실한 방법이었습니다. 동작 여부는 문서가 아니라 실제 빌드 결과와 로그로 판단했습니다.</p>
+  </section>
+
+  <!-- ===================== 4 ===================== -->
+  <section class="case" id="case-lab">
+    <p class="case-no">CASE 04</p>
+    <h2>고객사 재현용 폐쇄망 테스트 환경 구축</h2>
+    <div class="case-meta"><span>2026</span><span>APM 솔루션 엔지니어</span><span>사내 테스트 환경</span></div>
+    <ul class="tags"><li>Rocky Linux</li><li>Kubernetes</li><li>Harbor</li><li>Docker</li><li>ZFS</li><li>Prometheus</li><li>Ceph</li></ul>
+    <p class="result"><b>결과</b> — <b>인터넷이 차단된 폐쇄망</b> 고객사가 많아서, 비슷한 조건의 테스트 환경을 직접 구성했습니다. 고객사에서 생긴 문제를 사내에서 먼저 재현하고 검증한 뒤 대응할 수 있게 됐습니다.</p>
+
+    <h3>구성한 것</h3>
+    <ul>
+      <li><b>컨테이너 레지스트리(Harbor 2.14)</b> — 외부 레지스트리를 쓸 수 없는 환경을 가정해 사설 레지스트리를 구축했습니다. 설정 파일 전체를 항목별로 분석해 문서화했고, 이미지 취약점 스캐너(Trivy)를 폐쇄망에서 쓰려면 어떤 옵션이 필요한지도 정리했습니다(<code>skip_update</code>, <code>offline_scan</code>).</li>
+      <li><b>Kubernetes 테스트 클러스터</b> — 클러스터를 구성해 컨테이너 모니터링 에이전트 배포를 실습했습니다. 특정 노드에만 DaemonSet을 배포하는 방법과 kubeconfig 인증서 오류 해결 과정을 정리했습니다.</li>
+      <li><b>오프라인 패키지 설치 절차</b> — 인터넷이 되는 곳에서 의존성까지 내려받고(<code>dnf --downloadonly</code>), 폐쇄망에서는 저장소를 끈 채 설치하는(<code>localinstall --disablerepo=*</code>) 절차를 만들었습니다. 이 방식으로 ZFS 스토리지 풀 구성까지 검증했습니다.</li>
+      <li><b>Keycloak SSO 재현 환경</b> — Docker Compose 기반으로 구성했습니다(CASE 02).</li>
+      <li><b>OpenMetrics 수집 검증</b> — MicroCeph 클러스터 메트릭을 Prometheus로 수집하는 파이프라인을 만들고, 모니터링 에이전트로 연동되는지 확인했습니다.</li>
+    </ul>
+
+    <h3>일하는 방식</h3>
+    <p>설정 파일과 명령마다 <b>"이 옵션이 왜 필요한지"</b>를 주석으로 남겨 팀이 함께 쓰는 문서로 만들었습니다. 설정 초안을 쓸 때는 생성형 AI를 활용했고, 실제 실행 결과와 오류 로그로 검증한 뒤 수정했습니다.</p>
+  </section>
+
+  <!-- ===================== 5 ===================== -->
+  <section class="case" id="case-cve">
+    <p class="case-no">CASE 05</p>
+    <h2>보안 취약점 발표 직후 고객사 영향도 대응</h2>
+    <div class="case-meta"><span>2026.10 ~ 2026.11</span><span>APM 솔루션 엔지니어</span><span>고객사 다수</span></div>
+    <ul class="tags"><li>CVE 대응</li><li>PHP · Node.js · Java</li><li>JDK 패치</li><li>고객 커뮤니케이션</li></ul>
+    <p class="result"><b>결과</b> — PHP와 Node.js 취약점이 연달아 발표되자 벤더와 함께 솔루션이 영향을 받는지 확인하고, <b>하루 만에 고객사 10곳 이상</b>에 근거 자료와 함께 "영향 없음"을 안내했습니다.</p>
+
+    <h3>진행</h3>
+    <ol class="steps">
+      <li>취약점 식별자(CVE)를 기준으로, 솔루션 구성 요소가 해당 런타임과 라이브러리를 쓰는지 벤더와 확인했습니다.</li>
+      <li>문의가 들어온 고객사뿐 아니라 <b>담당 고객사 전체</b>에 근거 문서를 첨부해 안내했습니다. 다음 날 Node.js 취약점이 추가로 발표되자 같은 방식으로 바로 이어서 안내했습니다.</li>
+      <li>이후 Java 관련 취약점 대응으로 JDK 패치가 필요한 고객사에는, 모니터링 서버를 중지하고 다시 실행하는 절차와 점검 명령을 가이드로 만들어 작업 일정에 맞춰 전달했습니다.</li>
+    </ol>
+    <p class="note">고객사 보안 담당자는 "우리가 쓰는 솔루션이 영향을 받는가"를 가장 빨리 알고 싶어 합니다. 그래서 정확성과 속도를 함께 맞추는 데 집중했습니다.</p>
+  </section>
+
+  <!-- ===================== 6 ===================== -->
+  <section class="case" id="case-dev">
+    <p class="case-no">CASE 06</p>
+    <h2>개발 프로젝트</h2>
+    <div class="case-meta"><span>2024.06 ~ 2025.07</span><span>백엔드 개발</span></div>
+    <ul class="more">
+      <li>
+        <b>데이터 마이그레이션 SQL 생성 자동화 — 작업 시간 약 85% 단축</b>
+        <span>대형 가전 기업 해외 사이트 구축(AEM). 약 200개 테이블, 30~40만 건을 이관하면서 엑셀 함수로 만들던 INSERT 문을 Java 메서드로 자동 생성했습니다. 테이블당 약 20분 걸리던 작업이 3분으로 줄었고 수작업 오류도 없앴습니다.
+        · <a href="https://ssangsu.tistory.com/361" target="_blank" rel="noopener">상세 글</a></span>
+      </li>
+      <li>
+        <b>사내 그룹웨어 복지포인트 갱신 오류 해결</b>
+        <span>매년 1월에 포인트가 비정상으로 계산되는 문제를 분석했습니다. 조회 기준 날짜가 애플리케이션 시작 시점에 고정되어 있던 것이 원인이었고, 조회할 때마다 날짜를 동적으로 계산하도록 수정했습니다.
+        · <a href="https://ssangsu.tistory.com/360" target="_blank" rel="noopener">상세 글</a></span>
+      </li>
+      <li>
+        <b>알림 플러그인 개발 (Java)</b>
+        <span>모니터링 서버의 알림 플러그인 구조를 활용해 Slack API와 SMS 알림을 구현했습니다. 고객사 요구에 맞춰 특정 이벤트만 별도 경로에 기록하는 플러그인 방안도 설계했습니다.</span>
+      </li>
+    </ul>
+  </section>
+
+  <footer>© 2026 김성수 · <a href="./">이력서</a></footer>
+</main>
+
+<script>
+  (function () {
+    var original = document.title;
+    window.addEventListener('beforeprint', function () { document.title = '김성수_포트폴리오_Backend_Engineer'; });
+    window.addEventListener('afterprint', function () { document.title = original; });
+  })();
+  (function () {
+    var links = document.querySelectorAll('.toc a');
+    if (!('IntersectionObserver' in window) || !links.length) return;
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.classList.remove('active'); });
+        var a = map[e.target.id];
+        if (a) {
+          a.classList.add('active');
+          var ol = a.closest('ol');
+          ol.scrollLeft = a.offsetLeft - ol.clientWidth / 2 + a.offsetWidth / 2;
+        }
+      });
+    }, { rootMargin: '-80px 0px -65% 0px' });
+    Object.keys(map).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
+  })();
+</script>
+</body>
+</html>

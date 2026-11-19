@@ -96,7 +96,11 @@
   .problem dt { font-weight: 700; display: inline; }
   .problem li b { margin-right: 4px; }
 
-  .hero-side { display: flex; align-items: flex-end; gap: 14px; flex: none; }
+  .hero-side { display: flex; align-items: flex-end; gap: 8px; flex: none; }
+  .hero-side .photo { margin-left: 6px; }
+  .hero-btns { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+  .hero-btns .print-btn { justify-content: center; }
+  .contacts li.print-only-item { display: none; }
   .print-btn {
     border: 1px solid var(--line); background: var(--surface); color: var(--text);
     border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 14px; line-height: 1.6; cursor: pointer;
@@ -133,7 +137,9 @@
   @media (max-width: 640px) {
     .wrap { padding: 40px 16px 80px; }
     header.hero { flex-direction: column-reverse; align-items: flex-start; }
-    .hero-side { width: 100%; justify-content: space-between; }
+    .hero-side { width: 100%; }
+    .hero-side .photo { margin-left: auto; }
+    .hero-btns { flex-direction: row; }
     .photo { width: 110px; height: 110px; }
     .hero h1 { font-size: 32px; }
     .hero .role { font-size: 18px; }
@@ -156,6 +162,7 @@
     .print-btn, footer, .screen-only, .toc { display: none !important; }
     .toc + section { margin-top: 7mm; }
     .print-only { display: inline; }
+    .contacts li.print-only-item { display: flex; }
     .wrap { max-width: none; padding: 0; }
 
     /* 헤더 */
@@ -224,13 +231,22 @@
         <li><a href="https://ssangsu.tistory.com/" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
           <span class="screen-only">학습용 블로그</span><span class="print-only">ssangsu.tistory.com</span></a></li>
+        <li class="print-only-item"><a href="https://ssangsoo.github.io/portfolio.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+          포트폴리오: ssangsoo.github.io/portfolio.html</a></li>
       </ul>
     </div>
     <div class="hero-side">
+      <div class="hero-btns">
+      <a class="print-btn" href="portfolio.html" aria-label="포트폴리오 보기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+        포트폴리오
+      </a>
       <a class="print-btn" href="resume.pdf" download="김성수_이력서_Backend_Engineer.pdf" aria-label="이력서 PDF 내려받기">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
         PDF 다운로드
       </a>
+      </div>
       <img class="photo" src="profile.jpg" alt="김성수 프로필 사진">
     </div>
   </header>
