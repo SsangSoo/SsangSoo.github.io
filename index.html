@@ -89,11 +89,11 @@
   .problem dt { font-weight: 700; display: inline; }
   .problem li b { margin-right: 4px; }
 
+  .hero-side { display: flex; align-items: flex-end; gap: 14px; flex: none; }
   .print-btn {
-    position: fixed; right: 20px; bottom: 20px;
-    border: 1px solid var(--line); background: var(--bg); color: var(--text);
-    border-radius: 999px; padding: 10px 16px; font: inherit; font-size: 14px; cursor: pointer;
-    box-shadow: 0 4px 14px rgba(0,0,0,.08);
+    border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 14px; cursor: pointer;
+    white-space: nowrap;
   }
   .print-btn:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -102,6 +102,7 @@
   @media (max-width: 640px) {
     .wrap { padding: 40px 16px 80px; }
     header.hero { flex-direction: column-reverse; align-items: flex-start; }
+    .hero-side { width: 100%; justify-content: space-between; }
     .photo { width: 110px; height: 110px; }
     .hero h1 { font-size: 32px; }
     .hero .role { font-size: 18px; }
@@ -167,6 +168,9 @@
     h2, h3, h4, .company, .period, .meta { break-after: avoid; page-break-after: avoid; }
     li, .stat, .highlights, header.hero, .company { break-inside: avoid; page-break-inside: avoid; }
     #certs, #education, #portfolio { break-inside: avoid; }
+    /* 큰 섹션은 항상 새 페이지에서 시작 → 제목만 남고 내용이 넘어가는 현상 방지 */
+    #career, #projects { break-before: page; page-break-before: always; margin-top: 0; }
+    .company + .meta { margin-bottom: 1mm; }
   }
 </style>
 </head>
@@ -189,7 +193,13 @@
           <span class="screen-only">학습용 블로그</span><span class="print-only">ssangsu.tistory.com</span></a></li>
       </ul>
     </div>
-    <img class="photo" src="profile.jpg" alt="김성수 프로필 사진">
+    <div class="hero-side">
+      <button class="print-btn" type="button" onclick="window.print()" aria-label="이력서를 PDF로 저장">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        PDF로 저장
+      </button>
+      <img class="photo" src="profile.jpg" alt="김성수 프로필 사진">
+    </div>
   </header>
 
   <section id="about">
@@ -337,10 +347,6 @@
   <footer>© 2026 김성수</footer>
 </main>
 
-<button class="print-btn" type="button" onclick="window.print()" aria-label="이력서를 PDF로 저장">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-  PDF로 저장
-</button>
 <script>
   // 저장되는 PDF 기본 파일명을 깔끔하게 지정
   (function () {
