@@ -159,7 +159,7 @@
     :root { --bg:#fff; --surface:#f4f6f9; --text:#111; --muted:#555; --line:#d9dce1; --accent:#1d4ed8; --accent-soft:#eaf0ff;
             --ok:#15803d; --ok-soft:#ecfdf3; --bad:#b42318; --bad-soft:#fef3f2; --code-bg:#f4f5f7; }
     html, body { background: #fff; }
-    body { font-size: 10pt; line-height: 1.6; -webkit-print-color-adjust: exact; print-color-adjust: exact; orphans: 3; widows: 3; }
+    body { font-size: 9.6pt; line-height: 1.58; -webkit-print-color-adjust: exact; print-color-adjust: exact; orphans: 3; widows: 3; }
     .toc, .hero-actions, footer { display: none !important; }
     .wrap { max-width: none; padding: 0; }
     header.hero { padding-bottom: 4mm; border-bottom: 2px solid var(--accent); }
@@ -178,7 +178,8 @@
     .case h3 { font-size: 11.5pt; margin: 4.5mm 0 1.5mm; }
     pre { font-size: 8pt; padding: 2.5mm 3mm; }
     figcaption { font-size: 8.5pt; margin-top: 1mm; }
-    figure { margin: 1mm auto 2mm; max-width: 115mm; }
+    figure { margin: 1mm auto 1mm; max-width: 100mm; }
+    figcaption { display: none; }
     .steps > li { margin: 1.5mm 0; }
     .case p { margin-bottom: 1.5mm; }
     .result { margin-bottom: 4mm; }
@@ -212,7 +213,6 @@
       <li><a href="#case-sso">Keycloak SSO 연동</a></li>
       <li><a href="#case-go">Go APM 계측 버그</a></li>
       <li><a href="#case-lab">폐쇄망 테스트 환경</a></li>
-      <li><a href="#case-cve">보안 취약점 대응</a></li>
       <li><a href="#case-dev">개발 프로젝트</a></li>
     </ol>
   </nav>
@@ -220,12 +220,11 @@
   <section class="overview" aria-labelledby="ov-title">
     <h2 id="ov-title">한눈에 보기</h2>
     <ol class="ov-list">
-      <li><span class="n">1</span><b>AWS RDS 로그 수집 실패 — IAM Role 적용 방식 차이 발견</b><span class="d">에러 로그로 원인을 특정해 벤더에 전달 → 제품 수정 버전 배포, 계정 간 수집 기능 개발로 이어짐</span></li>
+      <li><span class="n">1</span><b>AWS RDS 로그 수집 실패 — IAM Role 적용 방식 차이 발견</b><span class="d">와탭 DBXC 에이전트의 에러 로그로 원인을 특정해 벤더에 전달 → 수정 버전(0.7.1) 배포, 계정 간 수집 기능 개발로 이어짐</span></li>
       <li><span class="n">2</span><b>Keycloak SAML SSO 연동 — Nginx 502와 인증 만료 오류 해결</b><span class="d">고객사 구성을 Docker로 재현해 두 가지 원인(프록시 버퍼, 서버 시간 차이)을 차례로 해결</span></li>
       <li><span class="n">3</span><b>Go APM 자동 계측 도구 — 옵션 버그 발견</b><span class="d">17개 라이브러리 계측을 검증하던 중 빌드 실패를 발견, 벤더가 제품 버그로 확인</span></li>
       <li><span class="n">4</span><b>폐쇄망 테스트 환경 구축</b><span class="d">Harbor, Kubernetes, 오프라인 패키지 설치 등 고객사 폐쇄망 환경을 재현하는 테스트 환경 구성</span></li>
-      <li><span class="n">5</span><b>보안 취약점 영향도 대응</b><span class="d">신규 CVE 발표 직후 영향 여부를 확인하고 하루 만에 고객사 10곳 이상에 안내</span></li>
-      <li><span class="n">6</span><b>개발 프로젝트</b><span class="d">SQL 생성 자동화로 작업 시간 약 85% 단축, 날짜 처리 버그 수정</span></li>
+      <li><span class="n">5</span><b>개발 프로젝트</b><span class="d">SQL 생성 자동화로 작업 시간 약 85% 단축, 날짜 처리 버그 수정</span></li>
     </ol>
   </section>
 
@@ -234,16 +233,18 @@
     <p class="case-no">CASE 01</p>
     <h2>AWS RDS 로그 수집 실패 — IAM Role 적용 방식 차이 발견</h2>
     <div class="case-meta"><span>2026.10 ~ 2026.11</span><span>APM 솔루션 엔지니어</span><span>대기업 고객사 (AWS 운영 환경)</span></div>
-    <ul class="tags"><li>AWS IAM</li><li>STS AssumeRole</li><li>CloudWatch Logs</li><li>RDS PostgreSQL</li><li>로그 분석</li></ul>
-    <p class="result"><b>결과</b> — 원인을 특정해 벤더에 전달했고, 벤더가 <b>제품을 수정한 에이전트 버전(0.7.1)</b>을 배포했습니다. 같은 문제를 겪던 다른 고객사 사례까지 이어져 <b>AWS 계정 간(크로스 어카운트) 수집 기능 개발</b>이 진행됐습니다.</p>
+    <ul class="tags"><li>와탭 DBXC 에이전트</li><li>AWS IAM</li><li>STS AssumeRole</li><li>CloudWatch Logs</li><li>RDS PostgreSQL</li><li>로그 분석</li></ul>
+    <p class="result"><b>결과</b> — 원인을 특정해 벤더(와탭랩스)에 전달했고, 벤더가 이를 반영해 <b>제품을 수정한 와탭 DBXC 에이전트 0.7.1</b>을 배포했습니다. 같은 문제를 겪던 다른 고객사 사례까지 이어져 <b>AWS 계정 간(크로스 어카운트) 수집 기능 개발</b>이 진행됐습니다.</p>
 
     <h3>상황</h3>
-    <p>고객사 RDS(PostgreSQL)를 모니터링하는 클라우드 에이전트에서 <b>메트릭은 정상으로 수집되는데 DB 로그만 수집되지 않는</b> 문제가 발생했습니다. 에이전트 설정에는 수집용 IAM Role(AssumeRole 대상)이 지정되어 있었고, 그 Role에는 로그 조회 권한이 포함된 관리형 정책이 붙어 있었습니다.</p>
+    <p>고객사는 AWS RDS(PostgreSQL)를 <b>와탭 DBXC 에이전트</b>로 모니터링하고 있었습니다. DBXC 에이전트는 와탭 DB 모니터링의 클라우드용 에이전트로, EC2 같은 서버에 설치되어 AWS CloudWatch API로 RDS의 메트릭과 DB 로그를 가져옵니다.</p>
+    <p>이 에이전트에서 <b>메트릭은 정상으로 수집되는데 DB 로그만 수집되지 않는</b> 문제가 발생했습니다. 에이전트 설정에는 수집용 IAM Role(AssumeRole 대상)이 지정되어 있었고, 그 Role에는 로그 조회 권한이 포함된 관리형 정책이 붙어 있었습니다.</p>
+    <p class="note">참고 문서: <a href="https://docs.whatap.io/postgresql/agent-cloud-settings-usage" target="_blank" rel="noopener">와탭 DBXC 에이전트 설치 및 사용</a> · <a href="https://docs.whatap.io/postgresql/agent-cloud-settings-logs" target="_blank" rel="noopener">DBXC 로그 수집 설정</a> (WhaTap Docs)</p>
 
     <h3>분석 과정</h3>
     <ol class="steps">
       <li>권한이 있는데도 실패한다는 점에서 <b>"권한 부족"이 아니라 "다른 주체로 호출하고 있다"</b>는 가설을 세우고 에이전트 로그를 확인했습니다.</li>
-      <li>에러 로그의 호출 주체가 설정한 수집용 Role이 아니라 <b>수집서버(EC2)의 인스턴스 Role</b>이라는 점을 발견했습니다.
+      <li>에러 로그의 호출 주체가 설정한 수집용 Role이 아니라, <b>DBXC 에이전트가 설치된 EC2 서버 자체의 IAM Role(인스턴스 Role)</b>이라는 점을 발견했습니다.
 <pre><code>AccessDeniedException: User: arn:aws:sts::&lt;ACCOUNT&gt;:assumed-role/<span class="hl-bad">&lt;collector-ec2-role&gt;</span>/&lt;instance-id&gt;
 is not authorized to perform: <span class="hl-bad">logs:FilterLogEvents</span> on resource: ...:log-group:/aws/rds/cluster/&lt;cluster&gt;/postgresql</code></pre></li>
       <li>즉 <b>메트릭 수집은 설정된 Role을 AssumeRole해서 호출하지만, 로그 수집은 AssumeRole 없이 EC2 기본 자격 증명으로 호출</b>하고 있었습니다. 에러 로그, 정책 구성, 에이전트 버전, 계정 구성을 정리해 벤더에 전달했고, 벤더도 같은 원인으로 확인했습니다.</li>
@@ -255,7 +256,7 @@ is not authorized to perform: <span class="hl-bad">logs:FilterLogEvents</span> o
           <marker id="aBad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--bad)"/></marker>
         </defs>
         <rect class="d-box-accent" x="10" y="70" width="170" height="70" rx="10"/>
-        <text class="d-t" x="95" y="100" text-anchor="middle">수집 에이전트</text>
+        <text class="d-t" x="95" y="100" text-anchor="middle">와탭 DBXC 에이전트</text>
         <text class="d-s" x="95" y="120" text-anchor="middle">EC2 (인스턴스 Role)</text>
 
         <rect class="d-box" x="260" y="14" width="170" height="50" rx="10"/>
@@ -280,8 +281,8 @@ is not authorized to perform: <span class="hl-bad">logs:FilterLogEvents</span> o
 
     <h3>해결</h3>
     <ul>
-      <li><b>임시 조치:</b> 수집서버와 RDS가 같은 AWS 계정이라는 점을 확인한 뒤, EC2 Role에 <code>logs:FilterLogEvents</code>, <code>logs:DescribeLogGroups</code> 권한만 최소로 추가해 바로 수집되도록 안내했습니다.</li>
-      <li><b>근본 해결:</b> 로그 수집에도 설정된 Role을 적용해 달라고 벤더에 요청하고 진행 상황을 계속 확인했습니다. 벤더가 수정 버전(0.7.1)을 배포하면서, 설정 한 줄만 추가하면 로그도 수집용 Role로 가져오게 됐습니다. 덕분에 <b>임시로 추가했던 EC2 Role 권한을 다시 제거</b>할 수 있게 됐습니다.</li>
+      <li><b>임시 조치:</b> 에이전트가 설치된 EC2와 RDS가 같은 AWS 계정이라는 점을 확인한 뒤, EC2 Role에 <code>logs:FilterLogEvents</code>, <code>logs:DescribeLogGroups</code> 권한만 최소로 추가해 바로 수집되도록 안내했습니다.</li>
+      <li><b>근본 해결:</b> 로그 수집에도 설정된 Role을 적용해 달라고 벤더에 요청하고 진행 상황을 계속 확인했습니다. 벤더가 수정된 DBXC 에이전트 0.7.1을 배포하면서, 설정 한 줄만 추가하면 로그도 수집용 Role로 가져오게 됐습니다. 덕분에 <b>임시로 추가했던 EC2 Role 권한을 다시 제거</b>할 수 있게 됐습니다.</li>
     </ul>
 
     <h3>배운 점</h3>
@@ -315,8 +316,8 @@ Assertion '...' with <span class="hl-bad">NotOnOrAfter</span> condition of '...'
 
     <h3>배운 점</h3>
     <ul>
-      <li>프록시를 거치는 인증 흐름에서는 브라우저 에러보다 <b>프록시와 애플리케이션 양쪽 로그</b>를 함께 봐야 원인이 보입니다.</li>
-      <li>SAML처럼 서명과 유효 시간을 검증하는 프로토콜은 <b>서버 간 시간 동기화가 전제 조건</b>입니다. 원인을 찾는 데 가장 오래 걸린 부분이라, 가이드에 따로 적어 두었습니다.</li>
+      <li><b>서버 간 시간 동기화는 연동의 기본 전제입니다.</b> SAML처럼 인증 정보에 유효 시간을 담아 검증하는 방식은, 서버끼리 시각이 조금만 어긋나도 정상 요청을 만료된 것으로 판정합니다. 화면이나 일반 로그에는 원인이 드러나지 않아 가장 찾기 어려웠던 문제였습니다.</li>
+      <li><b>Nginx가 HTTP 응답을 중계할 때 쓰는 버퍼에는 크기 한계가 정해져 있고, 설정으로 늘릴 수 있습니다.</b> 응답 헤더가 기본 버퍼(<code>proxy_buffer_size</code>)보다 크면 Nginx는 응답을 전달하지 못하고 502를 반환합니다. 이 경우 <code>proxy_buffer_size</code>, <code>proxy_buffers</code>, <code>proxy_busy_buffers_size</code>를 키워서 해결할 수 있다는 것을 배웠습니다.</li>
     </ul>
   </section>
 
@@ -351,16 +352,16 @@ go: <span class="hl-bad">error obtaining buildID for go tool compile: exit statu
     <p class="case-no">CASE 04</p>
     <h2>고객사 재현용 폐쇄망 테스트 환경 구축</h2>
     <div class="case-meta"><span>2026</span><span>APM 솔루션 엔지니어</span><span>사내 테스트 환경</span></div>
-    <ul class="tags"><li>Rocky Linux</li><li>Kubernetes</li><li>Harbor</li><li>Docker</li><li>ZFS</li><li>Prometheus</li><li>Ceph</li></ul>
-    <p class="result"><b>결과</b> — <b>인터넷이 차단된 폐쇄망</b> 고객사가 많아서, 비슷한 조건의 테스트 환경을 직접 구성했습니다. 고객사에서 생긴 문제를 사내에서 먼저 재현하고 검증한 뒤 대응할 수 있게 됐습니다.</p>
+    <ul class="tags"><li>Rocky Linux</li><li>Kubernetes</li><li>Harbor</li><li>Docker</li><li>Prometheus</li></ul>
+    <p class="result"><b>결과</b> — <b>외부망이 차단된 폐쇄망</b> 고객사가 많아서, 비슷한 조건의 테스트 환경을 직접 구성했습니다. 고객사에서 생긴 문제를 사내에서 먼저 재현하고 검증한 뒤 대응할 수 있게 됐습니다.</p>
 
     <h3>구성한 것</h3>
     <ul>
-      <li><b>컨테이너 레지스트리(Harbor 2.14)</b> — 외부 레지스트리를 쓸 수 없는 환경을 가정해 사설 레지스트리를 구축했습니다. 설정 파일 전체를 항목별로 분석해 문서화했고, 이미지 취약점 스캐너(Trivy)를 폐쇄망에서 쓰려면 어떤 옵션이 필요한지도 정리했습니다(<code>skip_update</code>, <code>offline_scan</code>).</li>
+      <li><b>컨테이너 레지스트리(Harbor 2.14)</b> — 외부망 레지스트리를 쓸 수 없는 환경을 가정해 사설 레지스트리를 구축했습니다. 설정 파일 전체를 항목별로 분석해 문서화했고, 이미지 취약점 스캐너(Trivy)를 폐쇄망에서 쓰려면 어떤 옵션이 필요한지도 정리했습니다(<code>skip_update</code>, <code>offline_scan</code>).</li>
       <li><b>Kubernetes 테스트 클러스터</b> — 클러스터를 구성해 컨테이너 모니터링 에이전트 배포를 실습했습니다. 특정 노드에만 DaemonSet을 배포하는 방법과 kubeconfig 인증서 오류 해결 과정을 정리했습니다.</li>
-      <li><b>오프라인 패키지 설치 절차</b> — 인터넷이 되는 곳에서 의존성까지 내려받고(<code>dnf --downloadonly</code>), 폐쇄망에서는 저장소를 끈 채 설치하는(<code>localinstall --disablerepo=*</code>) 절차를 만들었습니다. 이 방식으로 ZFS 스토리지 풀 구성까지 검증했습니다.</li>
+      <li><b>오프라인 패키지 설치 절차</b> — 외부망이 되는 곳에서 의존성까지 내려받고(<code>dnf --downloadonly</code>), 폐쇄망에서는 저장소를 끈 채 설치하는(<code>localinstall --disablerepo=*</code>) 절차를 만들었습니다.</li>
       <li><b>Keycloak SSO 재현 환경</b> — Docker Compose 기반으로 구성했습니다(CASE 02).</li>
-      <li><b>OpenMetrics 수집 검증</b> — MicroCeph 클러스터 메트릭을 Prometheus로 수집하는 파이프라인을 만들고, 모니터링 에이전트로 연동되는지 확인했습니다.</li>
+      <li><b>OpenMetrics 수집 검증</b> — Prometheus 형식(OpenMetrics)으로 노출되는 메트릭을 수집하는 파이프라인을 만들고, 모니터링 에이전트로 연동되는지 확인했습니다.</li>
     </ul>
 
     <h3>일하는 방식</h3>
@@ -368,25 +369,8 @@ go: <span class="hl-bad">error obtaining buildID for go tool compile: exit statu
   </section>
 
   <!-- ===================== 5 ===================== -->
-  <section class="case" id="case-cve">
-    <p class="case-no">CASE 05</p>
-    <h2>보안 취약점 발표 직후 고객사 영향도 대응</h2>
-    <div class="case-meta"><span>2026.10 ~ 2026.11</span><span>APM 솔루션 엔지니어</span><span>고객사 다수</span></div>
-    <ul class="tags"><li>CVE 대응</li><li>PHP · Node.js · Java</li><li>JDK 패치</li><li>고객 커뮤니케이션</li></ul>
-    <p class="result"><b>결과</b> — PHP와 Node.js 취약점이 연달아 발표되자 벤더와 함께 솔루션이 영향을 받는지 확인하고, <b>하루 만에 고객사 10곳 이상</b>에 근거 자료와 함께 "영향 없음"을 안내했습니다.</p>
-
-    <h3>진행</h3>
-    <ol class="steps">
-      <li>취약점 식별자(CVE)를 기준으로, 솔루션 구성 요소가 해당 런타임과 라이브러리를 쓰는지 벤더와 확인했습니다.</li>
-      <li>문의가 들어온 고객사뿐 아니라 <b>담당 고객사 전체</b>에 근거 문서를 첨부해 안내했습니다. 다음 날 Node.js 취약점이 추가로 발표되자 같은 방식으로 바로 이어서 안내했습니다.</li>
-      <li>이후 Java 관련 취약점 대응으로 JDK 패치가 필요한 고객사에는, 모니터링 서버를 중지하고 다시 실행하는 절차와 점검 명령을 가이드로 만들어 작업 일정에 맞춰 전달했습니다.</li>
-    </ol>
-    <p class="note">고객사 보안 담당자는 "우리가 쓰는 솔루션이 영향을 받는가"를 가장 빨리 알고 싶어 합니다. 그래서 정확성과 속도를 함께 맞추는 데 집중했습니다.</p>
-  </section>
-
-  <!-- ===================== 6 ===================== -->
   <section class="case" id="case-dev">
-    <p class="case-no">CASE 06</p>
+    <p class="case-no">CASE 05</p>
     <h2>개발 프로젝트</h2>
     <div class="case-meta"><span>2024.06 ~ 2025.07</span><span>백엔드 개발</span></div>
     <ul class="more">
