@@ -185,6 +185,7 @@
     .result { margin-bottom: 4mm; }
     h2, h3, .case-no, .case-meta { break-after: avoid; page-break-after: avoid; }
     li, pre, figure, .result, .ov-list li, .more li { break-inside: avoid; page-break-inside: avoid; }
+    .steps > li.long { break-inside: auto; page-break-inside: auto; }
   }
 </style>
 </head>
@@ -463,20 +464,36 @@ calculation(today());   // 호출할 때마다 오늘 날짜</code></pre>
     <h3>구현한 것</h3>
     <ol class="steps">
       <li><b>공통 유틸 라이브러리</b> — 플러그인마다 반복되는 HTTP 호출, 문자열·리스트 검증, 알림 레벨별 색상 지정을 별도 Java 유틸 jar로 분리했습니다. 플러그인 코드는 연동 로직에만 집중할 수 있게 했습니다.</li>
-      <li><b>태그별 Slack 채널 라우팅</b> — 알림에 붙은 이벤트 수신 태그에 따라 다른 Slack 채널로 보냅니다. 태그가 없으면 제품 타입(서버, DB 등)별 채널로 보냅니다. 태그와 채널 URL의 매핑은 <b>설정 파일에만 두어</b>, 채널을 추가하거나 바꿀 때 코드를 고치지 않아도 되게 했습니다.
-<pre><code># notihub.conf — 태그/타입별 Slack 채널 (설정만 바꾸면 라우팅이 바뀐다)
-custom_alert_tag_default=https://hooks.slack.com/services/...   # 주석 처리하면 전체 채널 전송 안 함
+      <li class="long"><b>태그별 Slack 채널 라우팅</b> — 고객사는 알림을 담당 팀별로 다른 Slack 채널에서 받고 싶어 했습니다. 와탭에서는 알림 설정에 <b>이벤트 수신 태그</b>를 붙일 수 있고, 플러그인은 그 태그 목록을 받을 수 있습니다. 또 플러그인 안에서 <b>알림 관련 conf의 값을 읽어올 수 있다</b>는 점을 활용했습니다. 그래서 "어떤 태그를 어느 채널로 보낼지"는 conf에 두고, 플러그인은 그 규칙대로 보내기만 하도록 설계했습니다.
+        <ul>
+          <li><b>conf 키 규칙</b> — <code>custom_alert_tag_{태그명}</code>, <code>custom_alert_type_{제품 타입}</code> 형식의 키에 Slack Webhook URL을 넣습니다. <code>_default</code> 키는 모든 알림을 함께 받는 전체 채널입니다.</li>
+          <li><b>라우팅 규칙</b> — 알림에 태그가 있으면 <b>태그마다 매핑된 채널</b>(+ 전체 채널)로 보내고, 태그가 없으면 <b>제품 타입(서버, DB 등)별 채널</b>(+ 전체 채널)로 보냅니다. 태그가 있는 알림을 우선하는 구조입니다.</li>
+          <li><b>메시지</b> — 알림 제목과 내용을 Slack 메시지로 만들고, 알림 레벨(위험/경고 등)에 따라 메시지 색을 다르게 지정합니다.</li>
+        </ul>
+<pre><code># 알림 관련 conf — 태그/타입별 Slack 채널 (값만 바꾸면 라우팅이 바뀐다)
+custom_alert_tag_default=https://hooks.slack.com/services/...   # 주석 처리하면 전체 채널로는 안 보냄
 custom_alert_tag_groupA=https://hooks.slack.com/services/...
+custom_alert_tag_groupB=https://hooks.slack.com/services/...
 custom_alert_type_SMS=https://hooks.slack.com/services/...</code></pre>
-        태그가 1개일 때, 여러 개일 때, 없을 때, 기본 채널을 끈 경우까지 수신 테스트로 검증했고, 고객사가 따라 할 수 있도록 가이드로 정리했습니다.</li>
-      <li><b>고객사 SMS 시스템 연동</b> — 알림이 오면 고객사 SMS 발송 시스템의 DB 테이블에 JDBC(<code>PreparedStatement</code>)로 발송 데이터를 넣습니다. DB 계정 정보는 평문으로 두지 않고, 수집서버의 암호화 도구로 암호화해 설정 파일에 둔 뒤 플러그인에서 복호화해 씁니다.</li>
+<pre><code>// 플러그인 핵심 흐름 (요약)
+List tags = $box.receiverValues;                       // 알림에 붙은 이벤트 수신 태그
+if (태그가 없으면) {
+    urls.add(getConfigString("custom_alert_type_default"));
+    urls.add(getConfigString("custom_alert_type_" + $product));       // 제품 타입별 채널
+} else {
+    urls.add(getConfigString("custom_alert_tag_default"));
+    for (tag : tags) urls.add(getConfigString("custom_alert_tag_" + tag));   // 태그별 채널
+}
+// 값이 비어 있는 키는 건너뛰고, 모인 URL마다 Slack 메시지 전송</code></pre>
+        <b>검증</b> — 실제 장애를 기다리지 않고 알림 <b>수신 테스트</b>로 경우마다 확인했습니다. 태그 1개면 해당 채널 + 전체 채널, 태그 n개면 n+1개 채널, 전체 채널 키를 주석 처리하면 해당 채널에만, 태그가 없으면 제품 타입 채널 + 전체 채널로 가는 것을 확인했습니다. 태그명은 conf 키와 <b>정확히 일치해야</b> 하고 영문과 <code>_</code>, <code>-</code>만 쓰는 것을 권장한다는 규칙과 함께, 고객사가 직접 채널을 추가할 수 있도록 가이드로 정리했습니다.</li>
+      <li><b>고객사 SMS 시스템 연동</b> — 알림이 오면 고객사 SMS 발송 시스템의 DB 테이블에 JDBC(<code>PreparedStatement</code>)로 발송 데이터를 넣습니다. DB 계정 정보는 평문으로 두지 않고, 수집서버의 암호화 도구로 암호화해 알림 관련 conf에 둔 뒤, 플러그인에서 읽어와 복호화해 씁니다.</li>
       <li><b>고객사 사내 메시징 API 연동</b> — 알림 제목에 담긴 환경 구분(개발/QA/운영/DR)에 따라 전송 대상을 나눠 고객사 사내 메시징 API를 호출합니다. 알림 처리가 멈추지 않도록 호출에 타임아웃을 두었습니다.</li>
       <li><b>특정 이벤트를 별도 경로에 기록 (진행 중)</b> — 특정 알림만 평소와 다른 경로에 파일로 남기고 싶다는 요청을 받았습니다. 고객사의 기존 플러그인 파일부터 받아 구조를 확인한 뒤, <b>태그 기반</b>과 <b>이벤트 제목 키워드 기반</b> 두 가지 방식을 테스트 환경에서 구현해 제안했습니다. 태그를 여러 개 걸면 같은 이벤트가 여러 경로에 기록될 수 있다는 주의점도 함께 안내했습니다.</li>
     </ol>
 
     <h3>일하는 방식</h3>
     <ul>
-      <li><b>바뀌는 값은 설정으로</b> — 채널 URL, 수신 대상, 계정 정보처럼 고객사마다 다른 값은 설정 파일로 빼서, 같은 플러그인을 여러 고객사에 재사용할 수 있게 했습니다.</li>
+      <li><b>바뀌는 값은 설정으로</b> — 채널 URL, 수신 대상, 계정 정보처럼 고객사마다 다른 값은 알림 관련 conf로 빼서, 같은 플러그인을 여러 고객사에 재사용할 수 있게 했습니다.</li>
       <li><b>먼저 확인하고, 선택지를 드리기</b> — 고객사의 현재 구성을 먼저 확인하고, 가능한 방식을 장단점과 함께 제안한 뒤 고객사가 고른 방식으로 구성합니다.</li>
     </ul>
   </section>
