@@ -220,7 +220,7 @@
   <section class="overview" aria-labelledby="ov-title">
     <h2 id="ov-title">한눈에 보기</h2>
     <ol class="ov-list">
-      <li><span class="n">1</span><b>AWS RDS 로그 수집 실패 — IAM Role 적용 방식 차이 발견</b><span class="d">와탭 DBXC 에이전트의 에러 로그로 원인을 특정해 벤더에 전달 → 수정 버전(0.7.1) 배포, 계정 간 수집 기능 개발로 이어짐</span></li>
+      <li><span class="n">1</span><b>AWS RDS 로그 수집 실패 — IAM Role 적용 방식 차이 발견</b><span class="d">와탭 DBXC 에이전트의 에러 로그로 원인을 특정해 벤더에 전달 → 제품 개선에 반영, 계정 간 수집 기능 개발로 이어짐</span></li>
       <li><span class="n">2</span><b>Keycloak SAML SSO 연동 — Nginx 502와 인증 만료 오류 해결</b><span class="d">고객사 구성을 Docker로 재현해 두 가지 원인(프록시 버퍼, 서버 시간 차이)을 차례로 해결</span></li>
       <li><span class="n">3</span><b>Go APM 자동 계측 도구 — 옵션 버그 발견</b><span class="d">17개 라이브러리 계측을 검증하던 중 빌드 실패를 발견, 벤더가 제품 버그로 확인</span></li>
       <li><span class="n">4</span><b>폐쇄망 테스트 환경 구축</b><span class="d">Harbor, Kubernetes, 오프라인 패키지 설치 등 고객사 폐쇄망 환경을 재현하는 테스트 환경 구성</span></li>
@@ -234,7 +234,7 @@
     <h2>AWS RDS 로그 수집 실패 — IAM Role 적용 방식 차이 발견</h2>
     <div class="case-meta"><span>2026.10 ~ 2026.11</span><span>APM 솔루션 엔지니어</span><span>대기업 고객사 (AWS 운영 환경)</span></div>
     <ul class="tags"><li>와탭 DBXC 에이전트</li><li>AWS IAM</li><li>STS AssumeRole</li><li>CloudWatch Logs</li><li>RDS PostgreSQL</li><li>로그 분석</li></ul>
-    <p class="result"><b>결과</b> — 원인을 특정해 벤더(와탭랩스)에 전달했고, 벤더가 이를 반영해 <b>제품을 수정한 와탭 DBXC 에이전트 0.7.1</b>을 배포했습니다. 같은 문제를 겪던 다른 고객사 사례까지 이어져 <b>AWS 계정 간(크로스 어카운트) 수집 기능 개발</b>이 진행됐습니다.</p>
+    <p class="result"><b>결과</b> — 원인을 특정해 벤더(와탭랩스)에 전달했고, 벤더가 이를 <b>제품 개선에 반영</b>했습니다. 같은 문제를 겪던 다른 고객사 사례까지 이어져 <b>AWS 계정 간(크로스 어카운트) 수집 기능 개발</b>이 진행됐습니다.</p>
 
     <h3>상황</h3>
     <p>고객사는 AWS RDS(PostgreSQL)를 <b>와탭 DBXC 에이전트</b>로 모니터링하고 있었습니다. DBXC 에이전트는 와탭 DB 모니터링의 클라우드용 에이전트로, EC2 같은 서버에 설치되어 AWS CloudWatch API로 RDS의 메트릭과 DB 로그를 가져옵니다.</p>
@@ -282,7 +282,7 @@ is not authorized to perform: <span class="hl-bad">logs:FilterLogEvents</span> o
     <h3>해결</h3>
     <ul>
       <li><b>임시 조치:</b> 에이전트가 설치된 EC2와 RDS가 같은 AWS 계정이라는 점을 확인한 뒤, EC2 Role에 <code>logs:FilterLogEvents</code>, <code>logs:DescribeLogGroups</code> 권한만 최소로 추가해 바로 수집되도록 안내했습니다.</li>
-      <li><b>근본 해결:</b> 로그 수집에도 설정된 Role을 적용해 달라고 벤더에 요청하고 진행 상황을 계속 확인했습니다. 벤더가 수정된 DBXC 에이전트 0.7.1을 배포하면서, 설정 한 줄만 추가하면 로그도 수집용 Role로 가져오게 됐습니다. 덕분에 <b>임시로 추가했던 EC2 Role 권한을 다시 제거</b>할 수 있게 됐습니다.</li>
+      <li><b>근본 해결:</b> 로그 수집에도 설정된 Role을 적용해 달라고 벤더에 요청하고 진행 상황을 계속 확인했습니다. 벤더가 이를 제품에 반영해 로그도 설정된 수집용 Role로 가져오게 됐고, 덕분에 <b>임시로 추가했던 EC2 Role 권한을 다시 제거</b>할 수 있게 됐습니다.</li>
     </ul>
 
     <h3>배운 점</h3>
